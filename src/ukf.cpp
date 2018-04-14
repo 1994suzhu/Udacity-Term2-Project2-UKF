@@ -95,7 +95,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   */
 	if (!is_initialized_)
 	{
-		if (meas_package.sensor_type_ = MeasurementPackage::RADAR) 
+		if (meas_package.sensor_type_ == MeasurementPackage::RADAR) 
 		{
 			cout << " initialize the processmeasurement radar----" << endl;
 			double ro = meas_package.raw_measurements_(0);
@@ -108,7 +108,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 			double v = sqrt(vx*vx + vy * vy);
 			x_ << px, py, v, 0, 0;
 		}
-		else if (meas_package.sensor_type_ = MeasurementPackage::LASER) 
+		else if (meas_package.sensor_type_ == MeasurementPackage::LASER) 
 		{
 			cout << "initialize the processmeasurement laser----" << endl;
 			double px = meas_package.raw_measurements_(0);
