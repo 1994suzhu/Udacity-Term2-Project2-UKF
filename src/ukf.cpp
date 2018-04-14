@@ -119,8 +119,8 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 		is_initialized_ = true;
     }
 	cout << "delta t calculation " << endl;
-	double dt = (meas_package.timestamp_ - time_us) / 1000000.0;
-	time_us = meas_package.timestamp_;
+	double dt = (meas_package.timestamp_ - time_us_) / 1000000.0;
+	time_us_ = meas_package.timestamp_;
 
 	cout << "prediction with dt " << endl;
 	Prediction(dt);
