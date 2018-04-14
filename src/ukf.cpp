@@ -69,13 +69,14 @@ UKF::UKF() {
 
   n_aug_ = n_x_+2 ;
 
-  n_sig_ = 2 * n_aug_ + 1;
+
+  int n_sig_ = 2 * n_aug_ + 1;
 
   lambda_ = 3 - n_x_;
 
   weights_ = VectorXd(n_sig_);
 
-  Xsig_pred_ = MatrixXd(n_x_, 2 * n_aug_ + 1);
+  MatrixXd Xsig_pred_ = MatrixXd(n_x_, 2 * n_aug_ + 1);
 
 }
 
