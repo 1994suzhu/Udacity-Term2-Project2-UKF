@@ -150,7 +150,8 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 * @param {double} delta_t the change in time (in seconds) between the last
 * measurement and this one.
 */
-void UKF::Prediction(double delta_t) {
+void UKF::Prediction(double delta_t) 
+{
 	/**
 	TODO:
 
@@ -167,8 +168,8 @@ void UKF::Prediction(double delta_t) {
 	//1. Generate sigma points
 	cout << " Generate sigma points--------------------" << endl;
 	MatrixXd A = P_.llt().matrixL();
-	MatrixXd Xsig = MatrixXd(n_x_, n_sig_)
-		Xsig.col(0) = x_;
+	MatrixXd Xsig = MatrixXd(n_x_, n_sig_);
+	Xsig.col(0) = x_;
 	for (int i = 0; i < n_x_; i++)
 	{
 		Xsig.col(i + 1) = x_ + sqrt(lambda_ + n_x_) * A.col(i);
@@ -190,7 +191,7 @@ void UKF::Prediction(double delta_t) {
 	P_aug_.topLeftCorner(5, 5) = P_;
 	P_aug_(5, 5) = std_a_ * std_a_;
 	P_aug_(6, 6) = std_yawdd_ * std_yawdd_;
-	MatrixXd L = P_aug.llt().matrixL();
+	MatrixXd L = P_aug_.llt().matrixL();
 
 	//create augmented sigma points
 	cout << "create augmented sigma points " << endl;
@@ -221,14 +222,16 @@ void UKF::Prediction(double delta_t) {
 		double px_p, py_p;
 
 		//avoid division by zero
-		if (fabs(yawd) > 0.001) {
-			px_p = p_x + v / yawd * (sin(yaw + yawd * delta_t) - sin(yaw));
-			py_p = p_y + v / yawd * (cos(yaw) - cos(yaw + yawd * delta_t));
-		}
-		else {
-			px_p = p_x + v * delta_t*cos(yaw);
-			py_p = p_y + v * delta_t*sin(yaw);
-		}
+			if (fabs(yawd) > 0.001) 
+			{
+				px_p = p_x + v / yawd * (sin(yaw + yawd * delta_t) - sin(yaw));
+				py_p = p_y + v / yawd * (cos(yaw) - cos(yaw + yawd * delta_t));
+			}
+			else 
+			{
+				px_p = p_x + v * delta_t*cos(yaw);
+				py_p = p_y + v * delta_t*sin(yaw);
+			}
 
 		double v_p = v;
 		double yaw_p = yaw + yawd * delta_t;
@@ -243,35 +246,37 @@ void UKF::Prediction(double delta_t) {
 		yawd_p = yawd_p + nu_yawdd * delta_t;
 
 		//write predicted sigma point into right column
-		Xsig_pred(0, i) = px_p;
-		Xsig_pred(1, i) = py_p;
-		Xsig_pred(2, i) = v_p;
-		Xsig_pred(3, i) = yaw_p;
-		Xsig_pred(4, i) = yawd_p;
+		Xsig_pred_(0, i) = px_p;
+		Xsig_pred_(1, i) = py_p;
+		Xsig_pred_(2, i) = v_p;
+		Xsig_pred_(3, i) = yaw_p;
+		Xsig_pred_(4, i) = yawd_p;
 	}
 	//Predict the next step X state with augmentated x state + sigma points + covariance of noise and state transition matrix
 	// set weights
 	cout << "set weights " << endl;
-	double weight_0 = lambda / (lambda + n_aug);
+	double weight_0 = lambda / (lambda + n_aug_);
 	weights_(0) = weight_0;
-	for (int i = 1; i < 2 * n_aug_ + 1; i++) {//2n+1 weights
-											  //set weights
+	for (int i = 1; i < 2 * n_aug_ + 1; i++) 
+	{//2n+1 weights
+												//set weights
 		weights_(i) = .5 / (lambda_ + n_aug_);
 	}
 }
 
 //predicted state mean
 //create vector for predicted state
-cout << " predict x_ mean with augmented sigma points " << endl;
+cout << "predict x_ mean with augmented sigma points " << endl;
 x_.fill(0.0);
-for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //iterate over sigma points
+for (int i = 0; i < 2 * n_aug_ + 1; i++) 
+{  //iterate over sigma points
 	x_ = x_ + weights_(i) * Xsig_pred_.col(i);//Vector + w*X sigma points vector.
 }
 
 //predicted state covariance matrix
 cout << " predict P_ with augmented sigma points " << endl;
 P_.fill(0.0);
-for (int i = 0; i < 2 * n_aug + 1; i++)
+for (int i = 0; i < 2 * n_aug_ + 1; i++)
 {   //iterate over sigma points
 	// state difference
 	VectorXd x_diff = Xsig_pred_.col(i) - x_;
@@ -282,15 +287,14 @@ for (int i = 0; i < 2 * n_aug + 1; i++)
 	P_ = P_ + weights_(i) * x_diff * x_diff.transpose();
 }
 //untill here , predict P and x mean with augmented state sigma points with weights_!
-	}
-}
 
 
 /**
 * Updates the state and the state covariance matrix using a laser measurement.
 * @param {MeasurementPackage} meas_package
 */
-void UKF::UpdateLidar(MeasurementPackage meas_package) {
+void UKF::UpdateLidar(MeasurementPackage meas_package) 
+{
 	/**
 	TODO:
 
@@ -312,7 +316,8 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
 	cout << "transform sigma points into measurement space " << endl;
 	//transform sigma points into measurement space
-	for (int i = 0; i < 2 * n_aug_ + 1; i++) {
+	for (int i = 0; i < 2 * n_aug_ + 1; i++) 
+	{
 		//transform sigma points into measurement space
 		VectorXd state_vec = Xsig_pred_.col(i);
 		double px = state_vec(0);
@@ -367,16 +372,17 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 	cout << " create matrix for cross correlation Tc" << endl;
 	MatrixXd Tc = MatrixXd(n_x_, n_z_);
 	Tc.fill(0.0);
-	for (int i = 0; i < 2 * n_aug_ + 1; i++) {
+	for (int i = 0; i < 2 * n_aug_ + 1; i++) 
+	{
 		VectorXd x_diff = Xsig_pred_.col(i) - x_;
 
-		//normalize angles
-		if (x_diff(3) > M_PI) {
-			x_diff(3) -= 2. * M_PI;
-		}
-		else if (x_diff(3) < -M_PI) {
-			x_diff(3) += 2. * M_PI;
-		}
+			//normalize angles
+			if (x_diff(3) > M_PI) {
+				x_diff(3) -= 2. * M_PI;
+			}
+			else if (x_diff(3) < -M_PI) {
+				x_diff(3) += 2. * M_PI;
+			}
 
 		VectorXd z_diff = Zsig_.col(i) - z_pred_;
 
