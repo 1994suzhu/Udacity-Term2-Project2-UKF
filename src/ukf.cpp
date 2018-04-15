@@ -225,7 +225,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
   You'll also need to calculate the lidar NIS.
   */
-
+cout<<"start update lidar"<<endl;
   // 1. Predit measurement
   int n_z_ = 2;
   //dari MatrixXd Zsig = Xsig_pred_.block(0, 0, n_z, n_sig_);
@@ -238,6 +238,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
       z_pred_ = z_pred_ + weights_(i) * Zsig_.col(i);
   }
 
+	cout<<"calculate measurement covariance matrix S"<<endl;
   //measurement covariance matrix S
   MatrixXd S = MatrixXd(n_z_,n_z_);
   S.fill(0.0);
@@ -253,9 +254,11 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
   // 2. Update state
   // Incoming radar measurement
+	cout<<"update measurement with sensor data"<<endl;
   VectorXd z = meas_package.raw_measurements_;
 
   //create matrix for cross correlation Tc
+	cout<<"calculation the cross correlation Tc"<<endl;
   MatrixXd Tc = MatrixXd(n_x_, n_z_);
 
   Tc.fill(0.0);
@@ -277,6 +280,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   VectorXd z_diff = z - z_pred_;
 
   //update state mean and covariance matrix
+	cout<<"update state mean covariance matrix"<<endl;
   x_ = x_ + K * z_diff;
   P_ = P_ - K*S*K.transpose();
 
