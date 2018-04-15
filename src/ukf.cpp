@@ -425,13 +425,6 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 	cout << "finish NIS_radar calculation" << endl;
 }
 
-/**
- *  Normalized the component `index` of the vector `vector` to be inside [-M_PI, M_PI] interval.
- */
-void UKF::NormalizeAngleOnComponent(VectorXd vector, int index) {
-  while (vector(index)> M_PI) vector(index)-=2.*M_PI;
-  while (vector(index)<-M_PI) vector(index)+=2.*M_PI;
-}
 
 /**
  * Predits sigma points.
