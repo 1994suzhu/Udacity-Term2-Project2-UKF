@@ -256,11 +256,13 @@ cout<<"start update lidar---------------------------"<<endl;
 
   // 2. Update state
   // Incoming radar measurement
-	cout<<"update measurement with sensor data"<<endl;
-  VectorXd z = meas_package.raw_measurements_;
+  cout<<"update measurement with sensor data"<<endl;
+  VectorXd z = VectorXd(n_z_);
+  z(0) = meas_package.raw_measurements_(0);
+  z(1) = meas_package.raw_measurements_(1);
 
   //create matrix for cross correlation Tc
-	cout<<"calculation the cross correlation Tc laser"<<endl;
+  cout<<"calculation the cross correlation Tc laser"<<endl;
   MatrixXd Tc = MatrixXd(n_x_, n_z_);
 
   Tc.fill(0.0);
@@ -356,8 +358,9 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   // new radar measurement
   //VectorXd z = meas_package.raw_measurements_;
   VectorXd z = VectorXd(n_z_);
-  z = meas_package.raw_measurements_();
-
+  z(0) = meas_package.raw_measurements_(0);
+  z(1) = meas_package.raw_measurements_(1);
+  z(2) = meas_package.raw_measurements_(2);
   cout << " create radar matrix for cross correlation Tc" << endl;
   //create matrix for cross correlation Tc
   MatrixXd Tc = MatrixXd(n_x_, n_z_);
