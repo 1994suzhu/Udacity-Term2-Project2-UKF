@@ -1,4 +1,22 @@
 # docker based UKF
+## tools.cpp file calculates the rmse of the estimation and ground truth data. It is pretty similar with EKF part.
+
+## ukf.h ( in this header file I added a R_radar, R_lidar for convenient.
+
+## ukf.cpp
+* I added many string output to debug the code.
+### initialization part
+* initialize the necessary parameters of code. some parameters need to be tuned
+### process measurement part
+* both of sensors(lidar, and radar ), their prediction step are same. However their update process are different. So in processmeasurement part, I made a whole code flow which can run same prediction code but run different update steps.
+### prediction part
+* augmented state generation
+* generat sigma points
+* make prediction based on the motion model
+### update radar part
+* radar gets 3 data. The measurement transition matrix is totally nonlinear. So the nonlinear function were made. using the sigma points which were predicted in prediction step. Based on the UKF functions, updating the x prediction and p prediction that are used in next step.
+### update lidar
+* lidar gets 2data. The measurement transition matrix is linear so the linear function were implemented.By using the sigma points 
 
 * Simulation result is showed as below figure. 
 RMSE: 
