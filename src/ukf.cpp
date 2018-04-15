@@ -147,6 +147,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   double dt = (meas_package.timestamp_ - time_us_) / 1000000.0;
   time_us_ = meas_package.timestamp_;
   // Prediction step
+	cout<<dt<<endl;
   Prediction(dt);
 
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR && use_radar_) {
