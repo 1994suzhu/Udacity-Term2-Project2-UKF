@@ -23,7 +23,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 	}
 	//cout << "accumulate squared residuals" << endl;
 	//accumulate squared residuals
-	for (int i = 0; i < estimations.size(); ++i) {
+	for (unsigned int i = 0; i < estimations.size(); ++i) {
 		// ... your code here
 		VectorXd r;
 		r = estimations[i] - ground_truth[i];
@@ -38,7 +38,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 	//calculate the squared root
 	// ... your code here
 	//cout << "squared root calculation " << endl;
-	rmse = sqrt(rmse.array());
+	rmse = rmse.array().sqrt();
 	//return the result
 	return rmse;
   */
