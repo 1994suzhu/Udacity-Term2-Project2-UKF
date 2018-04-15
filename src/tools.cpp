@@ -4,7 +4,7 @@
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
 using std::vector;
-
+using namespace std
 Tools::Tools() {}
 
 Tools::~Tools() {}
@@ -13,7 +13,6 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
                               const vector<VectorXd> &ground_truth) {
 
 	//I think I need to change dimensions here to calculate the rmse
-	using std::cout;
 	cout << "initiallize vector rmse " << endl;
 	VectorXd rmse(4);
 	rmse << 0, 0, 0, 0;
