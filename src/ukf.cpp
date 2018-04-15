@@ -398,7 +398,7 @@ void UKF::NormalizeAngleOnComponent(VectorXd vector, int index) {
  * @param nu_yawdd : Process noise standard deviation yaw acceleration in rad/s^2
  */
 MatrixXd UKF::PredictSigmaPoints(MatrixXd Xsig, double delta_t, int n_x, int n_sig, double nu_am, double nu_yawdd) {
-  MatrixXd Xsig_pred = MatrixXd(n_x, n_sig);
+  MatrixXd Xsig_pred_ = MatrixXd(n_x, n_sig);
   //predict sigma points
   for (int i = 0; i< n_sig; i++)
   {
@@ -415,9 +415,9 @@ MatrixXd UKF::PredictSigmaPoints(MatrixXd Xsig, double delta_t, int n_x, int n_s
     double px_p, py_p;
 
     //avoid division by zero
-    if (fabs(yawd) > EPS) {
-        px_p = p_x + v/yawd * ( sin (yaw + yawd*delta_t) - sin(yaw));
-        py_p = p_y + v/yawd * ( cos(yaw) - cos(yaw+yawd*delta_t) );
+    if (fabs(yawd) > 0.001) {
+        px_p = p_x + v/yawd * ( sin (yaw + yawd * delta_t) - sin(yaw));
+        py_p = p_y + v/yawd * ( cos(yaw) - cos(yaw + yawd*delta_t) );
     }
     else {
         px_p = p_x + v*delta_t*cos(yaw);
@@ -425,7 +425,7 @@ MatrixXd UKF::PredictSigmaPoints(MatrixXd Xsig, double delta_t, int n_x, int n_s
     }
 
     double v_p = v;
-    double yaw_p = yaw + yawd*delta_t;
+    double yaw_p = yaw + yawd * delta_t;
     double yawd_p = yawd;
 
     //add noise
@@ -444,7 +444,7 @@ MatrixXd UKF::PredictSigmaPoints(MatrixXd Xsig, double delta_t, int n_x, int n_s
     Xsig_pred(4,i) = yawd_p;
   }
 
-  return Xsig_pred;
+  return Xsig_pred_;
 }
 
 /**
