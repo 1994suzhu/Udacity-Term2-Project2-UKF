@@ -43,22 +43,22 @@ UKF::UKF() {
   std_yawdd_ = 0.6;
 
   //DO NOT MODIFY measurement noise values below these are provided by the sensor manufacturer.
-	//No need to modify anything!!!!!
-	// Laser measurement noise standard deviation position1 in m
-	std_laspx_ = 0.15;
+//No need to modify anything!!!!!
+// Laser measurement noise standard deviation position1 in m
+std_laspx_ = 0.15;
 
-	// Laser measurement noise standard deviation position2 in m
-	std_laspy_ = 0.15;
+// Laser measurement noise standard deviation position2 in m
+std_laspy_ = 0.15;
 
-	// Radar measurement noise standard deviation radius in m
-	std_radr_ = 0.3;
+// Radar measurement noise standard deviation radius in m
+std_radr_ = 0.3;
 
-	// Radar measurement noise standard deviation angle in rad
-	std_radphi_ = 0.03;
+// Radar measurement noise standard deviation angle in rad
+std_radphi_ = 0.03;
 
-	// Radar measurement noise standard deviation radius change in m/s
-	std_radrd_ = 0.3;
-	//DO NOT MODIFY measurement noise values above these are provided by the sensor manufacturer.
+// Radar measurement noise standard deviation radius change in m/s
+std_radrd_ = 0.3;
+//DO NOT MODIFY measurement noise values above these are provided by the sensor manufacturer.
 
   /**
   TODO:
@@ -89,6 +89,7 @@ UKF::UKF() {
   {//2n+1 weights
 	weights_(i) = .5 / (lambda_ + n_aug_);
   }
+  cout<<weights_<<endl;
   // Initialize measurement noice covarieance matrix
   //R_lidar_ defined in ukf.h file, lidar has 2 dimensions.
   R_lidar_ = MatrixXd(2, 2);
@@ -119,8 +120,9 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   measurements.
   */
   if ( !is_initialized_) {
+	  cout<<"initialize lidar and radar"<<endl;
     if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
-      double ro = meas_package.raw_measurements_(0);
+        double ro = meas_package.raw_measurements_(0);
 	double phi = meas_package.raw_measurements_(1);
 	double ro_dot = meas_package.raw_measurements_(2);
 	double px = ro * cos(phi);
@@ -206,7 +208,7 @@ cout<<"start prediction step"<<endl;
 
     P_ = P_ + weights_(i) * x_diff * x_diff.transpose() ;
   }
-	cout<<"finish prediction one time"<<endl;
+	cout<<"+++++++++++++++++++++++++++finish prediction one time+++++++++++++++++++++++++++"<<endl;
 
 }
 
@@ -236,7 +238,7 @@ cout<<"start update lidar---------------------------"<<endl;
       z_pred_ = z_pred_ + weights_(i) * Zsig_.col(i);
   }
 
-	cout<<"calculate measurement covariance matrix S"<<endl;
+cout<<"calculate measurement covariance matrix S"<<endl;
   //measurement covariance matrix S
   MatrixXd S = MatrixXd(n_z_,n_z_);
   S.fill(0.0);
@@ -285,9 +287,9 @@ cout<<"start update lidar---------------------------"<<endl;
   P_ = P_ - K*S*K.transpose();
 
   //NIS Lidar Update
-	cout<<"calculation the NIS_Laser"<<endl;
+cout<<"calculation the NIS_Laser"<<endl;
   NIS_laser_ = z_diff.transpose() * S.inverse() * z_diff;
-	cout<<"finish  NIS lidar calculation"<<endl;
+cout<<"finish  NIS lidar calculation"<<endl;
 }
 
 /**
@@ -396,6 +398,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
   //NIS Update
   NIS_radar_ = z_diff.transpose() * S.inverse() * z_diff;
+	cout<<"finish NIS_radar calculation"<<endl;
 }
 
 /**
