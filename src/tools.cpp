@@ -11,11 +11,7 @@ Tools::~Tools() {}
 
 VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
                               const vector<VectorXd> &ground_truth) {
-  /**
-  TODO:
-	/* Calculate the RMSE here.
-	*/
-	//from udacity 
+
 	//I think I need to change dimensions here to calculate the rmse
 	cout << "initiallize vector rmse " << endl;
 	VectorXd rmse(4);
@@ -41,7 +37,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 	//calculate the squared root
 	// ... your code here
 	cout << "squared root calculation " << endl;
-	rmse = rmse.array().sqrt();
+	rmse = sqrt(rmse.array());
 	//return the result
 	return rmse;
   */
