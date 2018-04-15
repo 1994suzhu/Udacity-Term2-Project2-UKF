@@ -11,36 +11,35 @@ Tools::~Tools() {}
 
 VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
                               const vector<VectorXd> &ground_truth) {
-  /**
-  TODO:
-    * Calculate the RMSE here.
+
+	//I think I need to change dimensions here to calculate the rmse
+	using std::cout;
+	cout << "initiallize vector rmse " << endl;
+	VectorXd rmse(4);
+	rmse << 0, 0, 0, 0;
+	if (estimations.size() != ground_truth.size() && estimations.size() == 0) {
+		cout << "Invalid estimation or ground_truth data" << endl;
+		return rmse;
+	}
+	//cout << "accumulate squared residuals" << endl;
+	//accumulate squared residuals
+	for (int i = 0; i < estimations.size(); ++i) {
+		// ... your code here
+		VectorXd r;
+		r = estimations[i] - ground_truth[i];
+		r = r.array()*r.array();
+		rmse = rmse + r;
+	}
+	//cout << "calculate the mean " << endl;
+	//calculate the mean
+	// ... your code here
+	rmse = rmse / estimations.size();
+
+	//calculate the squared root
+	// ... your code here
+	//cout << "squared root calculation " << endl;
+	rmse = sqrt(rmse.array());
+	//return the result
+	return rmse;
   */
-  VectorXd rmse(4);
-  rmse << 0,0,0,0;
-
-  if(estimations.size() == 0){
-    std::cout << "ERROR - CalculateRMSE () - The estimations vector is empty" << std::endl;
-    return rmse;
-  }
-
-  if(ground_truth.size() == 0){
-    std::cout << "ERROR - CalculateRMSE () - The ground-truth vector is empty" << std::endl;
-    return rmse;
-  }
-
-  unsigned int n = estimations.size();
-  if(n != ground_truth.size()){
-    std::cout << "ERROR - CalculateRMSE () - The ground-truth and estimations vectors must have the same size." << std::endl;
-    return rmse;
-  }
-
-  for(unsigned int i=0; i < estimations.size(); ++i){
-    VectorXd diff = estimations[i] - ground_truth[i];
-    diff = diff.array()*diff.array();
-    rmse += diff;
-  }
-
-  rmse = rmse / n;
-  rmse = rmse.array().sqrt();
-  return rmse;
 }
