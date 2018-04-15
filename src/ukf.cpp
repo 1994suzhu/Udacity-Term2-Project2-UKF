@@ -233,8 +233,9 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 	cout << "start update lidar---------------------------" << endl;
 	// 1. Predit measurement
 	int n_z_ = 2;
+	
+	// define the Zsig_ points equal to Xsig_pred_ variable.
 	MatrixXd Zsig_ = Xsig_pred_.block(0, 0, n_z_, n_sig_);
-	//MatrixXd Zsig_ = MatrixXd(n_z_, n_sig_);
 
 	//mean predicted measurement
 	VectorXd z_pred_ = VectorXd(n_z_);
@@ -248,7 +249,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 	MatrixXd S = MatrixXd(n_z_, n_z_);
 	S.fill(0.0);
 	for (int i = 0; i < n_sig_; i++) {  //2n+1 simga points
-										//residual
+		//residual
 		VectorXd z_diff = Zsig_.col(i) - z_pred_;
 
 		S = S + weights_(i) * z_diff * z_diff.transpose();
