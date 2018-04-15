@@ -129,9 +129,10 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 	double vx = ro_dot * cos(phi);
 	double vy = ro_dot * sin(phi);
 	double v = sqrt(vx*vx + vy * vy);
+	cout<<"finish initialize the process measurement in radar"<<endl;
 	x_ << px, py, v, 0, 0;
 	    
-    } else if (meas_package.sensor_type_ == MeasurementPackage::LASER)
+    } else (meas_package.sensor_type_ == MeasurementPackage::LASER)
 	{
 	cout << "initialize the processmeasurement laser----" << endl;
 	double px = meas_package.raw_measurements_(0);
@@ -175,7 +176,7 @@ void UKF::Prediction(double delta_t) {
   Complete this function! Estimate the object's location. Modify the state
   vector, x_. Predict sigma points, the state, and the state covariance matrix.
   */
-
+cout<<"start prediction step"<<endl;
   // 1. Generate sigma points.
   //create augmented mean vector
   VectorXd x_aug_ = VectorXd(n_aug_);
@@ -211,6 +212,7 @@ void UKF::Prediction(double delta_t) {
 
     P_ = P_ + weights_(i) * x_diff * x_diff.transpose() ;
   }
+	cout<<"finish prediction one time"<<endl;
 
 }
 
@@ -291,6 +293,7 @@ cout<<"start update lidar---------------------------"<<endl;
   //NIS Lidar Update
 	cout<<"calculation the NIS_Laser"<<endl;
   NIS_laser_ = z_diff.transpose() * S.inverse() * z_diff;
+	cout<<"finish  NIS lidar calculation"<<endl;
 }
 
 /**
@@ -413,7 +416,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 MatrixXd UKF::PredictSigmaPoints(MatrixXd Xsig, double delta_t, int n_x, int n_sig, double nu_am, double nu_yawdd) {
   MatrixXd Xsig_pred_ = MatrixXd(n_x, n_sig);
   //predict sigma points
-	cout<<"predictsigmapoints step start"<<endl;
+	cout<<"predict sigma points step start"<<endl;
   for (int i = 0; i< n_sig; i++)
   {
     //extract values for better readability
