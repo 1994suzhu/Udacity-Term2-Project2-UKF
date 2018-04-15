@@ -2,8 +2,6 @@
 #include "Eigen/Dense"
 #include <iostream>
 
-#define EPS 0.001
-
 using namespace std;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -13,78 +11,96 @@ using std::vector;
  * Initializes Unscented Kalman filter
  */
 UKF::UKF() {
-  // if this is false, laser measurements will be ignored (except during init)
-  use_laser_ = true;
+cout << "--initialize--" << endl;
+	// if this is false, laser measurements will be ignored (except during init)
+	use_laser_ = true;
 
-  // if this is false, radar measurements will be ignored (except during init)
-  use_radar_ = true;
+	// if this is false, radar measurements will be ignored (except during init)
+	use_radar_ = true;
 
-  // state vector dimension
-  n_x_ = 5;
+	// state vector dimension
+	n_x_ = 5;
 
-  // initial state vector
-  x_ = VectorXd(n_x_);
+	// initial state vector
+	x_ = VectorXd(n_x_);
 
-  // initial covariance matrix
-  P_ = MatrixXd(n_x_, n_x_);
-  P_ << 1, 0, 0, 0, 0,
-        0, 1, 0, 0, 0,
-        0, 0, 1, 0, 0,
-        0, 0, 0, 1, 0,
-        0, 0, 0, 0, 1;
+	// initial covariance matrix
+	P_ = MatrixXd(n_x_, n_x_);
+	P_ << 1, 0, 0, 0, 0,
+		0, 1, 0, 0, 0,
+		0, 0, 1, 0, 0,
+		0, 0, 0, 1, 0,
+		0, 0, 0, 0, 1;
 
-  // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 1.5;
+	// Process noise standard deviation longitudinal acceleration in m/s^2
+	// Need to be tuned!!
+	std_a_ = 1.6;
 
-  // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 0.5;
+	// Process noise standard deviation yaw acceleration in rad/s^2
+	// Need to be tuned!!
+	std_yawdd_ = 0.6;
 
-  // Laser measurement noise standard deviation position1 in m
-  std_laspx_ = 0.15;
+	//DO NOT MODIFY measurement noise values below these are provided by the sensor manufacturer.
+	//No need to modify anything!!!!!
+	// Laser measurement noise standard deviation position1 in m
+	std_laspx_ = 0.15;
 
-  // Laser measurement noise standard deviation position2 in m
-  std_laspy_ = 0.15;
+	// Laser measurement noise standard deviation position2 in m
+	std_laspy_ = 0.15;
 
-  // Radar measurement noise standard deviation radius in m
-  std_radr_ = 0.3;
+	// Radar measurement noise standard deviation radius in m
+	std_radr_ = 0.3;
 
-  // Radar measurement noise standard deviation angle in rad
-  std_radphi_ = 0.03;
+	// Radar measurement noise standard deviation angle in rad
+	std_radphi_ = 0.03;
 
-  // Radar measurement noise standard deviation radius change in m/s
-  std_radrd_ = 0.3;
+	// Radar measurement noise standard deviation radius change in m/s
+	std_radrd_ = 0.3;
+	//DO NOT MODIFY measurement noise values above these are provided by the sensor manufacturer.
 
-  /**
-  TODO:
+	/**
+	TODO:
 
-  Complete the initialization. See ukf.h for other member properties.
+	Complete the initialization. See ukf.h for other member properties.
 
-  Hint: one or more values initialized above might be wildly off...
-  */
+	Hint: one or more values initialized above might be wildly off...
+	*/
+	cout << "--initial user parameter--" << endl;
 
-  lambda_ = 3 - n_x_;
+	lambda_ = 3 - n_x_;
 
-  ///* Augmented state dimension
-  n_aug_ = n_x_ + 2;
+	///* Augmented state dimension
+	n_aug_ = n_x_ + 2;
 
-  ///* Sigma points dimension
-  n_sig_ = 2 * n_aug_ + 1;
+	///* Sigma points dimension
+	n_sig_ = 2 * n_aug_ + 1;
 
-  // Initialize weights.
-  weights_ = VectorXd(n_sig_);
-  weights_.fill(0.5 / (n_aug_ + lambda_));
-  weights_(0) = lambda_ / (lambda_ + n_aug_);
+	///* X sigma point prediction dimension definition.
+	Xsig_pred_ = MatrixXd(n_x_, 2 * n_aug_ + 1);
 
-  // Initialize measurement noice covarieance matrix
-  R_radar_ = MatrixXd(3, 3);
-  R_radar_ << std_radr_*std_radr_, 0, 0,
-              0, std_radphi_*std_radphi_, 0,
-              0, 0,std_radrd_*std_radrd_;
+	// Initialize weights.
+	weights_ = VectorXd(n_sig_);
+	cout << "set weights " << endl;
+	double weight_0 = lambda_ / (lambda_ + n_aug_);
+	weights_(0) = weight_0;
+	for (int i = 1; i < n_sig_; i++)
+	{//2n+1 weights
+		weights_(i) = .5 / (lambda_ + n_aug_);
+	}
+	cout << weights_ << endl;
+	// Initialize measurement noice covarieance matrix
+	//R_lidar_ defined in ukf.h file, lidar has 2 dimensions.
+	R_lidar_ = MatrixXd(2, 2);
+	R_lidar_ << std_laspx_ * std_laspx_, 0,
+		0, std_laspy_*std_laspy_;
 
-  R_lidar_ = MatrixXd(2, 2);
-  R_lidar_ << std_laspx_*std_laspx_,0,
-              0,std_laspy_*std_laspy_;
+	//R_radar_ defined in ukf.h file, radar has 3 dimensions.
+	R_radar_ = MatrixXd(3, 3);
+	R_radar_ << std_radr_ * std_radr_, 0, 0,
+		0, std_radphi_*std_radphi_, 0,
+		0, 0, std_radrd_*std_radrd_;
 
+	cout << "initialization finished" << endl;
 }
 
 UKF::~UKF() {}
