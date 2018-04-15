@@ -3,6 +3,10 @@
 #include <vector>
 #include "Eigen/Dense"
 
+using Eigen::MatrixXd;
+using Eigen::VectorXd;
+using namespace std;
+
 class Tools {
 public:
   /**
