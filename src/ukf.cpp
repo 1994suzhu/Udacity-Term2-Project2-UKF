@@ -152,11 +152,11 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   Prediction(dt);
 
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR && use_radar_) {
-    cout << "Update Radar " << endl;
+    cout << "Update Radar in process measurement step " << endl;
     UpdateRadar(meas_package);
   }
   else if (meas_package.sensor_type_ == MeasurementPackage::LASER && use_laser_) {
-    cout << "Update Lidar " << endl;
+    cout << "Update Lidar in process measurement step" << endl;
     UpdateLidar(meas_package);
   }
 }
@@ -225,7 +225,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
   You'll also need to calculate the lidar NIS.
   */
-cout<<"start update lidar"<<endl;
+cout<<"start update lidar---------------------------"<<endl;
   // 1. Predit measurement
   int n_z_ = 2;
   //dari MatrixXd Zsig = Xsig_pred_.block(0, 0, n_z, n_sig_);
@@ -285,6 +285,7 @@ cout<<"start update lidar"<<endl;
   P_ = P_ - K*S*K.transpose();
 
   //NIS Lidar Update
+	cout<<"calculation the NIS_Laser"<<endl;
   NIS_laser_ = z_diff.transpose() * S.inverse() * z_diff;
 }
 
@@ -301,6 +302,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
   You'll also need to calculate the radar NIS.
   */
+	cout<<"update radar----------------------------"<<endl;
   // Radar measument dimension
   int n_z_ = 3;
   // 1. Predict measurement
