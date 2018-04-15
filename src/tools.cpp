@@ -14,7 +14,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 
 	//I think I need to change dimensions here to calculate the rmse
 	using std::cout;
-	cout << "initiallize vector rmse " << endl;
+	
 	VectorXd rmse(4);
 	rmse << 0, 0, 0, 0;
 	if (estimations.size() != ground_truth.size() && estimations.size() == 0) {
@@ -40,5 +40,6 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 	//cout << "squared root calculation " << endl;
 	rmse = rmse.array().sqrt();
 	//return the result
+	cout << rmse << endl;
 	return rmse;
 }
