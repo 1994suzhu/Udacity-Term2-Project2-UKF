@@ -101,10 +101,10 @@ public:
   ///* Lidar measurement noise covariance matrix
   MatrixXd R_lidar_;
 
-  ///* the current NIS for radar
+  ///* the current NIS - radar
   double NIS_radar_;
 
-  ///* the current NIS for laser
+  ///* the current NIS - laser
   double NIS_laser_;
 
 
