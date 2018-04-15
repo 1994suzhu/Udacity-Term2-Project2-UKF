@@ -353,13 +353,13 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
   cout << " create matrix for cross correlation Tc" << endl;
   //create matrix for cross correlation Tc
-  MatrixXd Tc = MatrixXd(n_x_, n_z);
+  MatrixXd Tc = MatrixXd(n_x_, n_z_);
 
   Tc.fill(0.0);
   for (int i = 0; i < n_sig_; i++) {  //2n+1 simga points
 
   //residual
-  VectorXd z_diff = Zsig.col(i) - z_pred;
+  VectorXd z_diff = Zsig_.col(i) - z_pred_;
   //angle normalization
   while (z_diff(1) > M_PI) z_diff(1) -= 2.*M_PI;
   while (z_diff(1) < -M_PI) z_diff(1) += 2.*M_PI;
