@@ -100,7 +100,9 @@ UKF::UKF() {
   R_radar_ << std_radr_*std_radr_, 0, 0,
               0, std_radphi_*std_radphi_, 0,
               0, 0,std_radrd_*std_radrd_;
-
+	
+cout<<"initialization finished"<<endl;
+	
 }
 
 UKF::~UKF() {}
@@ -155,7 +157,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     cout << "Update Radar in process measurement step " << endl;
     UpdateRadar(meas_package);
   }
-  else if (meas_package.sensor_type_ == MeasurementPackage::LASER && use_laser_) {
+  if (meas_package.sensor_type_ == MeasurementPackage::LASER && use_laser_) {
     cout << "Update Lidar in process measurement step" << endl;
     UpdateLidar(meas_package);
   }
