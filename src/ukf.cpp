@@ -260,7 +260,7 @@ cout<<"start update lidar---------------------------"<<endl;
   VectorXd z = meas_package.raw_measurements_;
 
   //create matrix for cross correlation Tc
-	cout<<"calculation the cross correlation Tc"<<endl;
+	cout<<"calculation the cross correlation Tc laser"<<endl;
   MatrixXd Tc = MatrixXd(n_x_, n_z_);
 
   Tc.fill(0.0);
@@ -282,7 +282,7 @@ cout<<"start update lidar---------------------------"<<endl;
   VectorXd z_diff = z - z_pred_;
 
   //update state mean and covariance matrix
-	cout<<"update state mean covariance matrix"<<endl;
+	cout<<"update laser state mean covariance matrix"<<endl;
   x_ = x_ + K * z_diff;
   P_ = P_ - K*S*K.transpose();
 
@@ -352,14 +352,13 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   S = S + R_radar_;
 
   // 2. Update state
-  cout << "update UKF with new measurements " << endl;
+  cout << "update UKF with radar new measurements " << endl;
   // new radar measurement
   //VectorXd z = meas_package.raw_measurements_;
   VectorXd z = VectorXd(n_z_);
-  z(0) = meas_package.raw_measurements_(0);
-  z(1) = meas_package.raw_measurements_(1);
+  z = meas_package.raw_measurements_();
 
-  cout << " create matrix for cross correlation Tc" << endl;
+  cout << " create radar matrix for cross correlation Tc" << endl;
   //create matrix for cross correlation Tc
   MatrixXd Tc = MatrixXd(n_x_, n_z_);
 
@@ -390,6 +389,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   while (z_diff(1) > M_PI) z_diff(1) -= 2.*M_PI;
   while (z_diff(1) < -M_PI) z_diff(1) += 2.*M_PI;
 
+  cout<<"update radar x_ and P_ "<<endl;
   //update state mean and covariance matrix
   x_ = x_ + K * z_diff;
   P_ = P_ - K*S*K.transpose();
@@ -410,6 +410,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 MatrixXd UKF::PredictSigmaPoints(MatrixXd Xsig, double delta_t, int n_x, int n_sig, double nu_am, double nu_yawdd) {
   MatrixXd Xsig_pred_ = MatrixXd(n_x, n_sig);
   //predict sigma points
+	cout<<"predictsigmapoints step start"<<endl;
   for (int i = 0; i< n_sig; i++)
   {
     //extract values for better readability
@@ -453,8 +454,9 @@ MatrixXd UKF::PredictSigmaPoints(MatrixXd Xsig, double delta_t, int n_x, int n_s
     Xsig_pred_(3,i) = yaw_p;
     Xsig_pred_(4,i) = yawd_p;
   }
-
+cout<<"return Xsig_pred_"<<endl;
   return Xsig_pred_;
+
 }
 
 /**
