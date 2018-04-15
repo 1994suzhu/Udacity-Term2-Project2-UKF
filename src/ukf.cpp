@@ -120,8 +120,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   */
   if ( !is_initialized_) {
     if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
-	cout << " initialize the processmeasurement radar----" << endl;
-	double ro = meas_package.raw_measurements_(0);
+      double ro = meas_package.raw_measurements_(0);
 	double phi = meas_package.raw_measurements_(1);
 	double ro_dot = meas_package.raw_measurements_(2);
 	double px = ro * cos(phi);
@@ -129,18 +128,12 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 	double vx = ro_dot * cos(phi);
 	double vy = ro_dot * sin(phi);
 	double v = sqrt(vx*vx + vy * vy);
-	cout<<"finish initialize the process measurement in radar"<<endl;
-	x_ << px, py, v, 0, 0;
-	    
-    } else (meas_package.sensor_type_ == MeasurementPackage::LASER)
-	{
-	cout << "initialize the processmeasurement laser----" << endl;
-	double px = meas_package.raw_measurements_(0);
-	double py = meas_package.raw_measurements_(1);
-	x_ << px, py, 0, 0, 0;
-	}
+      x_ << x, y, v, 0, 0;
+    } else {
+      x_ << meas_package.raw_measurements_(0), meas_package.raw_measurements_(1), 0, 0, 0;
+    }
 
-    // Save first timestamp in seconds
+    // Saving first timestamp in seconds
     time_us_ = meas_package.timestamp_ ;
     // done initializing, no need to predict or update
     is_initialized_ = true;
@@ -162,6 +155,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     cout << "Update Lidar in process measurement step" << endl;
     UpdateLidar(meas_package);
   }
+	
 }
 
 /**
