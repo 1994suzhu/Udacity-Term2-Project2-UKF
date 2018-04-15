@@ -437,11 +437,11 @@ MatrixXd UKF::PredictSigmaPoints(MatrixXd Xsig, double delta_t, int n_x, int n_s
     yawd_p = yawd_p + nu_yawdd*delta_t;
 
     //write predicted sigma point into right column
-    Xsig_pred(0,i) = px_p;
-    Xsig_pred(1,i) = py_p;
-    Xsig_pred(2,i) = v_p;
-    Xsig_pred(3,i) = yaw_p;
-    Xsig_pred(4,i) = yawd_p;
+    Xsig_pred_(0,i) = px_p;
+    Xsig_pred_(1,i) = py_p;
+    Xsig_pred_(2,i) = v_p;
+    Xsig_pred_(3,i) = yaw_p;
+    Xsig_pred_(4,i) = yawd_p;
   }
 
   return Xsig_pred_;
