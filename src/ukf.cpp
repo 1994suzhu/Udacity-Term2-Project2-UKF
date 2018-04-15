@@ -222,70 +222,79 @@ void UKF::Prediction(double delta_t) {
  * @param {MeasurementPackage} meas_package
  */
 void UKF::UpdateLidar(MeasurementPackage meas_package) {
-  /**
-  TODO:
+ /**
+	TODO:
 
-  Complete this function! Use lidar data to update the belief about the object's
-  position. Modify the state vector, x_, and covariance, P_.
+	Complete this function! Use lidar data to update the belief about the object's
+	position. Modify the state vector, x_, and covariance, P_.
 
-  You'll also need to calculate the lidar NIS.
-  */
+	You'll also need to calculate the lidar NIS.
+	*/
+	cout << "start update lidar---------------------------" << endl;
+	// 1. Predit measurement
+	int n_z_ = 2;
+	//dari MatrixXd Zsig = Xsig_pred_.block(0, 0, n_z, n_sig_);
+	MatrixXd Zsig_ = MatrixXd(n_z_, n_sig_);
 
-  // 1. Predit measurement
-  int n_z = 2;
-  MatrixXd Zsig = Xsig_pred_.block(0, 0, n_z, n_sig_);
+	//mean predicted measurement
+	VectorXd z_pred_ = VectorXd(n_z_);
+	z_pred_.fill(0.0);
+	for (int i = 0; i < n_sig_; i++) {
+		z_pred_ = z_pred_ + weights_(i) * Zsig_.col(i);
+	}
 
-  //mean predicted measurement
-  VectorXd z_pred = VectorXd(n_z);
-  z_pred.fill(0.0);
-  for (int i=0; i < n_sig_; i++) {
-      z_pred = z_pred + weights_(i) * Zsig.col(i);
-  }
+	cout << "calculate measurement covariance matrix S" << endl;
+	//measurement covariance matrix S
+	MatrixXd S = MatrixXd(n_z_, n_z_);
+	S.fill(0.0);
+	for (int i = 0; i < n_sig_; i++) {  //2n+1 simga points
+										//residual
+		VectorXd z_diff = Zsig_.col(i) - z_pred_;
 
-  //measurement covariance matrix S
-  MatrixXd S = MatrixXd(n_z,n_z);
-  S.fill(0.0);
-  for (int i = 0; i < n_sig_; i++) {  //2n+1 simga points
-    //residual
-    VectorXd z_diff = Zsig.col(i) - z_pred;
+		S = S + weights_(i) * z_diff * z_diff.transpose();
+	}
 
-    S = S + weights_(i) * z_diff * z_diff.transpose();
-  }
+	//add measurement noise covariance matrix
+	S = S + R_lidar_;
 
-  //add measurement noise covariance matrix
-  S = S + R_lidar_;
+	// 2. Update state
+	// Incoming radar measurement
+	cout << "update measurement with sensor data" << endl;
+	VectorXd z = VectorXd(n_z_);
+	z(0) = meas_package.raw_measurements_(0);
+	z(1) = meas_package.raw_measurements_(1);
 
-  // 2. Update state
-  // Incoming radar measurement
-  VectorXd z = meas_package.raw_measurements_;
+	//create matrix for cross correlation Tc
+	cout << "calculation the cross correlation Tc laser" << endl;
+	MatrixXd Tc = MatrixXd(n_x_, n_z_);
 
-  //create matrix for cross correlation Tc
-  MatrixXd Tc = MatrixXd(n_x_, n_z);
+	Tc.fill(0.0);
+	for (int i = 0; i < n_sig_; i++) {  //2n+1 simga points
 
-  Tc.fill(0.0);
-  for (int i = 0; i < n_sig_; i++) {  //2n+1 simga points
+										//residual
+		VectorXd z_diff = Zsig_.col(i) - z_pred_;
 
-    //residual
-    VectorXd z_diff = Zsig.col(i) - z_pred;
+		// state difference
+		VectorXd x_diff = Xsig_pred_.col(i) - x_;
 
-    // state difference
-    VectorXd x_diff = Xsig_pred_.col(i) - x_;
+		Tc = Tc + weights_(i) * x_diff * z_diff.transpose();
+	}
 
-    Tc = Tc + weights_(i) * x_diff * z_diff.transpose();
-  }
+	//Kalman gain K;
+	MatrixXd K = Tc * S.inverse();
 
-  //Kalman gain K;
-  MatrixXd K = Tc * S.inverse();
+	//residual
+	VectorXd z_diff = z - z_pred_;
 
-  //residual
-  VectorXd z_diff = z - z_pred;
+	//update state mean and covariance matrix
+	cout << "update laser state mean covariance matrix" << endl;
+	x_ = x_ + K * z_diff;
+	P_ = P_ - K * S*K.transpose();
 
-  //update state mean and covariance matrix
-  x_ = x_ + K * z_diff;
-  P_ = P_ - K*S*K.transpose();
-
-  //NIS Lidar Update
-  NIS_laser_ = z_diff.transpose() * S.inverse() * z_diff;
+	//NIS Lidar Update
+	cout << "calculation the NIS_Laser" << endl;
+	NIS_laser_ = z_diff.transpose() * S.inverse() * z_diff;
+	cout << "finish  NIS lidar calculation" << endl;
 }
 
 /**
