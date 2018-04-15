@@ -149,10 +149,11 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   // Prediction step
 cout<<"delta time is "<<endl;
 cout<<dt<<endl;
+	
 while (dt > 0.1)
 {
 const double deltat = 0.05;
-Predict(deltat);
+Prediction(deltat);
 dt -= deltat;
 }
   Prediction(dt);
