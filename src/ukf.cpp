@@ -167,46 +167,53 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
  * measurement and this one.
  */
 void UKF::Prediction(double delta_t) {
-  /**
-  TODO:
+/**
+	TODO:
 
-  Complete this function! Estimate the object's location. Modify the state
-  vector, x_. Predict sigma points, the state, and the state covariance matrix.
-  */
+	Complete this function! Estimate the object's location. Modify the state
+	vector, x_. Predict sigma points, the state, and the state covariance matrix.
+	*/
+	cout << "start prediction step" << endl;
+	// 1. Generate sigma points.
+	//create augmented mean vector
+	VectorXd x_aug_ = VectorXd(n_aug_);
+	x_aug_.head(5) = x_;
+	x_aug_(5) = 0;
+	x_aug_(6) = 0;
 
-  // 1. Generate sigma points.
-  //create augmented mean vector
-  VectorXd x_aug = VectorXd(n_aug_);
-  x_aug.head(5) = x_;
-  x_aug(5) = 0;
-  x_aug(6) = 0;
+	//create augmented state covariances
+	MatrixXd P_aug_ = MatrixXd(n_aug_, n_aug_);
+	P_aug_.fill(0.0);
+	P_aug_.topLeftCorner(n_x_, n_x_) = P_;
+	P_aug_(5, 5) = std_a_ * std_a_;
+	P_aug_(6, 6) = std_yawdd_ * std_yawdd_;
 
-  //create augmented state covariance
-  MatrixXd P_aug = MatrixXd(n_aug_, n_aug_);
-  P_aug.fill(0.0);
-  P_aug.topLeftCorner(n_x_,n_x_) = P_;
-  P_aug(5,5) = std_a_*std_a_;
-  P_aug(6,6) = std_yawdd_*std_yawdd_;
+	// Create sigma points of augmented states.
+	cout << "create augmented sigma points " << endl;
+	MatrixXd Xsig_aug_ = GenerateSigmaPoints(x_aug_, P_aug_, lambda_, n_sig_);
+	// 2. Predict Sigma Points.
+	Xsig_pred_ = PredictSigmaPoints(Xsig_aug_, delta_t, n_x_, n_sig_, std_a_, std_yawdd_);
+	// 3. Predict Mean and Covariance
+	//predicted state mean
+	x_ = Xsig_pred_ * weights_;
 
-  // Creating sigma points.
-  MatrixXd Xsig_aug = GenerateSigmaPoints(x_aug, P_aug, lambda_, n_sig_);
-  // 2. Predict Sigma Points.
-  Xsig_pred_ = PredictSigmaPoints(Xsig_aug, delta_t, n_x_, n_sig_, std_a_, std_yawdd_);
-  // 3. Predict Mean and Covariance
-  //predicted state mean
-  x_ = Xsig_pred_ * weights_;
+	//predicted state covariance matrix
+	P_.fill(0.0);
+	for (int i = 0; i < n_sig_; i++) {  //iterate over sigma points
 
-  //predicted state covariance matrix
-  P_.fill(0.0);
-  for (int i = 0; i < n_sig_; i++) {  //iterate over sigma points
+										// state difference
+		VectorXd x_diff = Xsig_pred_.col(i) - x_;
+		//angle normalization
+		if (x_diff(3) > M_PI) {
+			x_diff(3) -= 2. * M_PI;
+		}
+		else if (x_diff(3) < -M_PI) {
+			x_diff(3) += 2. * M_PI;
+		}
+		P_ = P_ + weights_(i) * x_diff * x_diff.transpose();
+	}
+	cout << "+++++++++++++++++++++++++++finish prediction one time+++++++++++++++++++++++++++" << endl;
 
-    // state difference
-    VectorXd x_diff = Xsig_pred_.col(i) - x_;
-    //angle normalization
-    NormalizeAngleOnComponent(x_diff, 3);
-
-    P_ = P_ + weights_(i) * x_diff * x_diff.transpose() ;
-  }
 
 }
 
