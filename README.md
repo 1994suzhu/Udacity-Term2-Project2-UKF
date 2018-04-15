@@ -1,7 +1,8 @@
 # docker based UKF
 ## tools.cpp file calculates the rmse of the estimation and ground truth data. It is pretty similar with EKF part.
 
-## ukf.h ( in this header file I added a R_radar, R_lidar for convenient.
+## ukf.h 
+* ( in this header file I added a R_radar, R_lidar for convenient.
 
 ## ukf.cpp
 * I added many string output to debug the code.
@@ -16,9 +17,10 @@
 ### update radar part
 * radar gets 3 data. The measurement transition matrix is totally nonlinear. So the nonlinear function were made. using the sigma points which were predicted in prediction step. Based on the UKF functions, updating the x prediction and p prediction that are used in next step.
 ### update lidar
-* lidar gets 2data. The measurement transition matrix is linear so the linear function were implemented.By using the sigma points 
+* lidar gets 2data. The measurement transition matrix is linear so the linear function were implemented.By using the sigma points from X state prediction step, Z prediction(sigma points) and mean of zprediction , measurement error can be calculated.Then, by using z error and x error , correlation matrix and Kalman gain can be calculated. Then same with update radar part, updating the x prediction and p prediction that are used in next step.
 
-* Simulation result is showed as below figure. 
+
+### Simulation result is showed as below figure. 
 RMSE: 
 X: 0.0690
 Y: 0.0830
