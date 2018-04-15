@@ -147,8 +147,14 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   double dt = (meas_package.timestamp_ - time_us_) / 1000000.0;
   time_us_ = meas_package.timestamp_;
   // Prediction step
-	cout<<"delta time is "<<endl;
-	cout<<dt<<endl;
+cout<<"delta time is "<<endl;
+cout<<dt<<endl;
+while (dt > 0.1)
+{
+const double deltat = 0.05;
+Predict(deltat);
+dt -= deltat;
+}
   Prediction(dt);
 
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR && use_radar_) {
